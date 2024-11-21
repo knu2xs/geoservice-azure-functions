@@ -7,6 +7,7 @@ import logging
 
 app = fns.FunctionApp(http_auth_level=fns.AuthLevel.ANONYMOUS)
 
+# TODO: Move to configuration file
 # configuration variables
 service_name: str = "sitkum_poi"
 service_description: str = "Test service description"
@@ -301,7 +302,7 @@ def layers(req: fns.HttpRequest) -> fns.HttpResponse:
 
 @app.route(route=service_layer_pth)
 def layer(req: fns.HttpRequest) -> fns.HttpResponse:
-    """Provide access directly to feature layer."""
+    """Provide access directly to specific feature layer information."""
     payload_str = json.dumps(layer_dict, indent=4)
     res = fns.HttpResponse(payload_str, status_code=200)
     return res
@@ -311,26 +312,112 @@ def layer(req: fns.HttpRequest) -> fns.HttpResponse:
 def query(req: fns.HttpRequest) -> fns.HttpResponse:
 
     # log function invocation
-    logging.info('Python HTTP trigger function "info" invoked.')
+    logging.info('Python HTTP trigger function "query" invoked.')
 
-    # try to retrieve name parameter
+    # try to retrieve name parameter and if where clause not provided, add default to get all data
     where = get_parameter(req, "where")
 
-    # report invocation success but missing parameter if no parameter passed
     if where is None:
-
-        # create the default where clause
         where = "1=1"
 
-        res = fns.HttpResponse(
-            "This HTTP triggered function executed successfully. Pass a where clause in the query string or in the request body for a personalized response.",
-            status_code=200,
-        )
+    # TODO: Actually handle parameters
+    # build payload
+    payload = {
+        "objectIdFieldName": "ObjectId",
+        "uniqueIdField": {"name": "ObjectId", "isSystemMaintained": True},
+        "globalIdFieldName": "GlobalID",
+        "geometryType": "esriGeometryPoint",
+        "spatialReference": {"wkid": 102100, "latestWkid": 3857},
+        "fields": [
+            {
+                "name": "name",
+                "type": "esriFieldTypeString",
+                "alias": "name",
+                "sqlType": "sqlTypeNVarchar",
+                "length": 4000,
+                "domain": None,
+                "defaultValue": None,
+            },
+            {
+                "name": "type",
+                "type": "esriFieldTypeString",
+                "alias": "type",
+                "sqlType": "sqlTypeNVarchar",
+                "length": 4000,
+                "domain": None,
+                "defaultValue": None,
+            },
+            {
+                "name": "lat",
+                "type": "esriFieldTypeDouble",
+                "alias": "lat",
+                "sqlType": "sqlTypeFloat",
+                "domain": None,
+                "defaultValue": None,
+            },
+            {
+                "name": "lon",
+                "type": "esriFieldTypeDouble",
+                "alias": "lon",
+                "sqlType": "sqlTypeFloat",
+                "domain": None,
+                "defaultValue": None,
+            },
+            {
+                "name": "ObjectId",
+                "type": "esriFieldTypeOID",
+                "alias": "ObjectId",
+                "sqlType": "sqlTypeInteger",
+                "domain": None,
+                "defaultValue": None,
+            },
+            {
+                "name": "GlobalID",
+                "type": "esriFieldTypeGlobalID",
+                "alias": "GlobalID",
+                "sqlType": "sqlTypeOther",
+                "length": 38,
+                "domain": None,
+                "defaultValue": "NEWID() WITH VALUES",
+            },
+        ],
+        "features": [
+            {
+                "attributes": {
+                    "name": "Put-In",
+                    "type": "access",
+                    "lat": 47.9555833,
+                    "lon": -124.0705556,
+                    "ObjectId": 1,
+                    "GlobalID": "43401e11-0e27-4feb-9448-59ee9d6fc84e",
+                },
+                "geometry": {"x": -13811471.071830537, "y": 6099468.6570671117},
+            },
+            {
+                "attributes": {
+                    "name": "Take-Out",
+                    "type": "access",
+                    "lat": 47.9608333,
+                    "lon": -124.2576389,
+                    "ObjectId": 2,
+                    "GlobalID": "0093824a-ddb7-46d5-aa02-edb705c8a6e8",
+                },
+                "geometry": {"x": -13832297.089522462, "y": 6100341.3632699922},
+            },
+            {
+                "attributes": {
+                    "name": "The Falls",
+                    "type": "rapid",
+                    "lat": 47.95025,
+                    "lon": -124.1139722,
+                    "ObjectId": 3,
+                    "GlobalID": "7b6aac61-d2c7-4826-b4e9-b47682fe56b4",
+                },
+                "geometry": {"x": -13816304.185634514, "y": 6098582.19471541},
+            },
+        ],
+    }
 
-    # report success if parameter value is able to be retrieved
-    else:
-        res = fns.HttpResponse(
-            f"This HTTP triggered function executed successfully.\nwhere clause: {where}"
-        )
+    res = fns.HttpResponse(json.dumps(payload, indent=4), status_code=200)
 
     return res
