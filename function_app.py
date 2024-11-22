@@ -51,16 +51,16 @@ def server_info(req: fns.HttpRequest) -> fns.HttpResponse:
 
     # assemble the dictionary payload for the response
     payload = {
-        "currentVersion": 0.1,
-        "fullVersion": "0.1.0",
-        "owningSystemUrl": "https://azure.app.url",
+        "owningSystemUrl": req.url.replace('/info', ''),
     }
 
-    # convert the payload to a string
-    payload_str = json.dumps(payload, indent=4)
-
     # assemble the response
-    res = fns.HttpResponse(payload_str, status_code=200)
+    res = fns.HttpResponse(
+        body=json.dumps(payload, indent=4), 
+        headers={"Content-Type": "application/json"},
+        mimetype="application/json",
+        status_code=200
+    )
 
     return res
 
@@ -71,7 +71,6 @@ def info(req: fns.HttpRequest) -> fns.HttpResponse:
 
     # assemble the dictionary payload for the response
     payload = {
-        "currentVersion": 0.1,
         "serviceDescription": f"{service_description}",
         "hasStaticData": True,
         "maxRecordCount": 1000,
@@ -122,7 +121,12 @@ def info(req: fns.HttpRequest) -> fns.HttpResponse:
     }
 
     # assemble the response
-    res = fns.HttpResponse(json.dumps(payload, indent=4), status_code=200)
+    res = fns.HttpResponse(
+        body=json.dumps(payload, indent=4), 
+        headers={"Content-Type": "application/json"},
+        mimetype="application/json",
+        status_code=200
+    )
 
     return res
 
@@ -131,7 +135,6 @@ def info(req: fns.HttpRequest) -> fns.HttpResponse:
 layer_dict = {
     "layers": [
         {
-            "currentVersion": 0.1,
             "id": 0,
             "name": service_name,
             "type": "Feature Layer",
@@ -296,15 +299,24 @@ def layers(req: fns.HttpRequest) -> fns.HttpResponse:
     """Provide layers info...infomation on avaialble layers."""
     # build payload with one layer info in a list
     payload_str = json.dumps([layer_dict], indent=4)
-    res = fns.HttpResponse(payload_str, status_code=200)
+    res = fns.HttpResponse(
+        body=payload_str, 
+        headers={"Content-Type": "application/json"},
+        mimetype="application/json",
+        status_code=200
+    )
     return res
 
 
 @app.route(route=service_layer_pth)
 def layer(req: fns.HttpRequest) -> fns.HttpResponse:
     """Provide access directly to specific feature layer information."""
-    payload_str = json.dumps(layer_dict, indent=4)
-    res = fns.HttpResponse(payload_str, status_code=200)
+    res = fns.HttpResponse(
+        body=json.dumps(layer_dict, indent=4), 
+        headers={"Content-Type": "application/json"},
+        mimetype="application/json",
+        status_code=200
+    )
     return res
 
 
@@ -418,6 +430,11 @@ def query(req: fns.HttpRequest) -> fns.HttpResponse:
         ],
     }
 
-    res = fns.HttpResponse(json.dumps(payload, indent=4), status_code=200)
+    res = fns.HttpResponse(
+        body=json.dumps(payload, indent=4), 
+        headers={"Content-Type": "application/json"},
+        mimetype="application/json",
+        status_code=200
+    )
 
     return res
