@@ -9,8 +9,8 @@ app = fns.FunctionApp(http_auth_level=fns.AuthLevel.ANONYMOUS)
 
 # TODO: Move to configuration file
 # configuration variables
-service_name: str = "sitkum_poi"
-service_description: str = "Test service description"
+service_name: str = "sitkum_poi_azure"
+service_description: str = "Sitkum POI Azure test service description"
 copyright_text: str = "Copyright Joel McCune 2024"
 
 # build path to feature service
@@ -57,8 +57,10 @@ def server_info(req: fns.HttpRequest) -> fns.HttpResponse:
     # assemble the response
     res = fns.HttpResponse(
         body=json.dumps(payload, indent=4), 
-        headers={"Content-Type": "application/json"},
-        mimetype="application/json",
+        headers={
+            "Access-Control-Allow-Origin": "*"
+            "Content-Type": "application/json"
+        },
         status_code=200
     )
 
@@ -123,8 +125,10 @@ def info(req: fns.HttpRequest) -> fns.HttpResponse:
     # assemble the response
     res = fns.HttpResponse(
         body=json.dumps(payload, indent=4), 
-        headers={"Content-Type": "application/json"},
-        mimetype="application/json",
+        headers={
+            "Access-Control-Allow-Origin": "*"
+            "Content-Type": "application/json"
+        },
         status_code=200
     )
 
@@ -301,8 +305,10 @@ def layers(req: fns.HttpRequest) -> fns.HttpResponse:
     payload_str = json.dumps([layer_dict], indent=4)
     res = fns.HttpResponse(
         body=payload_str, 
-        headers={"Content-Type": "application/json"},
-        mimetype="application/json",
+        headers={
+            "Access-Control-Allow-Origin": "*"
+            "Content-Type": "application/json"
+        },
         status_code=200
     )
     return res
@@ -313,8 +319,10 @@ def layer(req: fns.HttpRequest) -> fns.HttpResponse:
     """Provide access directly to specific feature layer information."""
     res = fns.HttpResponse(
         body=json.dumps(layer_dict, indent=4), 
-        headers={"Content-Type": "application/json"},
-        mimetype="application/json",
+        headers={
+            "Access-Control-Allow-Origin": "*"
+            "Content-Type": "application/json"
+        },
         status_code=200
     )
     return res
@@ -432,8 +440,10 @@ def query(req: fns.HttpRequest) -> fns.HttpResponse:
 
     res = fns.HttpResponse(
         body=json.dumps(payload, indent=4), 
-        headers={"Content-Type": "application/json"},
-        mimetype="application/json",
+        headers={
+            "Access-Control-Allow-Origin": "*"
+            "Content-Type": "application/json"
+        },
         status_code=200
     )
 
